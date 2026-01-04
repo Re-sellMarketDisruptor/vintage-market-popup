@@ -1,0 +1,321 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>I Heart Vintage Market</title>
+    <style>
+        /* --- Reset and Core Styles --- */
+        * {
+            box-sizing: border-box;
+        }
+        body, html {
+            height: 100%;
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            overflow: hidden; 
+        }
+
+        /* --- The Main Background (DESKTOP) --- */
+        .bg-container {
+            /* Desktop Background = PNG */
+            background-image: url('image_1.png'); 
+            
+            background-size: contain; 
+            background-position: center center;
+            background-repeat: no-repeat;
+            background-color: #d8c0a8; 
+            
+            height: 100vh;
+            width: 100%;
+            position: relative; 
+        }
+
+        /* --- The Clickable Sticker (DESKTOP POSITION) --- */
+        .sticker-trigger {
+            position: absolute;
+
+            /* DESKTOP: Vertically centered */
+            top: 50%;   
+
+            /* DESKTOP: 75% to the right */
+            left: 75%;  
+
+            transform: translate(-50%, -50%);
+
+            max-width: 250px;
+            width: 60%; 
+            height: auto;
+            cursor: pointer;
+            transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            filter: drop-shadow(0 10px 15px rgba(0,0,0,0.3));
+            z-index: 10;
+        }
+
+        .sticker-trigger:hover {
+            transform: translate(-50%, -50%) scale(1.08) rotate(-3deg);
+        }
+
+        /* --- The Modal/Popup Overlay --- */
+        .modal-overlay {
+            display: none; 
+            position: fixed; 
+            z-index: 100; 
+            left: 0;
+            top: 0;
+            width: 100%; 
+            height: 100%; 
+            overflow: auto; 
+            background-color: rgba(30, 10, 20, 0.8); 
+            backdrop-filter: blur(5px); 
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            animation: fadeIn 0.3s ease-out;
+        }
+
+        /* --- The Modal Content Box --- */
+        .modal-content {
+            background-color: #fffafc; 
+            margin: auto;
+            padding: 30px;
+            border: 3px solid #ff9ebb; 
+            border-radius: 20px;
+            width: 100%;
+            max-width: 450px; 
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4);
+            position: relative;
+            animation: slideUp 0.3s ease-out;
+        }
+
+        .close-btn {
+            color: #aaa;
+            position: absolute;
+            top: 15px;
+            right: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        .close-btn:hover, .close-btn:focus { color: #ff6b9d; }
+
+        /* --- Form Styling --- */
+        h2 {
+            text-align: center;
+            color: #ff6b9d;
+            margin-top: 0;
+        }
+        
+        .form-group { margin-bottom: 15px; }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #555;
+            font-size: 0.9rem;
+        }
+
+        input[type="text"],
+        input[type="tel"],
+        textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #eee;
+            border-radius: 10px;
+            font-size: 16px; 
+            transition: border-color 0.3s;
+            background-color: #fff;
+        }
+
+        input:focus, textarea:focus {
+            outline: none;
+            border-color: #ff9ebb;
+        }
+
+        textarea { resize: vertical; height: 100px; }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background-color: #ff6b9d; 
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+        }
+
+        .submit-btn:hover { background-color: #ff4785; }
+        .submit-btn:active { transform: scale(0.98); }
+
+        #thankYouMessage {
+            display: none; 
+            text-align: center;
+            color: #555;
+            padding: 20px 0;
+        }
+        #thankYouMessage h3 { color: #ff6b9d; font-size: 24px; margin-bottom: 10px; }
+        #thankYouMessage img { max-width: 80px; margin-bottom: 20px;}
+
+
+        /* --- Animations --- */
+        @keyframes fadeIn {
+            from {opacity: 0;} to {opacity: 1;}
+        }
+        @keyframes slideUp {
+            from {transform: translateY(50px); opacity: 0;}
+            to {transform: translateY(0); opacity: 1;}
+        }
+
+        /* --- MOBILE SPECIFIC SETTINGS --- */
+        @media screen and (max-width: 768px) {
+            
+            /* 1. SWITCH BACKGROUND IMAGE */
+            .bg-container {
+                /* Mobile Background = JPG */
+                background-image: url('image_mobile.jpg'); 
+                background-size: cover; 
+                background-position: center;
+            }
+
+            /* 2. MOBILE STICKER POSITION */
+            .sticker-trigger {
+                width: 70%; 
+                
+                /* TOP POSITIONING: 
+                   15% means 15% down from the very top edge.
+                   Make this number smaller (e.g., 5%) to go higher.
+                   Make this number bigger (e.g., 25%) to go lower. */
+                top: 15%;   
+
+                /* Horizontally Center */
+                left: 50%;  
+            }
+
+            .modal-content { padding: 20px 15px; }
+        }
+        
+    </style>
+</head>
+<body>
+
+    <div class="bg-container">
+        <img src="image_0.png" alt="Be a part of our next market - Click here" class="sticker-trigger" id="openModalBtn">
+    </div>
+
+
+    <div id="formModalOverlay" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" id="closeModalBtn">&times;</span>
+            
+            <div id="formContainer">
+                <h2>Join the Market!</h2>
+                <form id="vintageMarketForm" action="https://formspree.io/f/PLACEHOLDER_REPLACE_ME" method="POST">
+                    
+                    <div class="form-group">
+                        <label for="fullName">Full Name <span style="color:#ff6b9d">*</span></label>
+                        <input type="text" id="fullName" name="fullName" required placeholder="Jane Doe">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phone">Phone Number <span style="color:#ff6b9d">*</span></label>
+                        <input type="tel" id="phone" name="phone" required placeholder="(555) 123-4567">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="socials">Social Media Accounts (IG/TikTok)</label>
+                        <input type="text" id="socials" name="socialMedia" placeholder="@yourvintagefinds">
+                    </div>
+
+                    <div class="form-group">
+                        <label for="moreInfo">Tell us more about what you sell</label>
+                        <textarea id="moreInfo" name="tellUsMore" placeholder="I sell 90s denim and reworked tees..."></textarea>
+                    </div>
+
+                    <button type="submit" class="submit-btn">Send Application</button>
+                </form>
+            </div>
+
+            <div id="thankYouMessage">
+                <img src="image_0.png" alt="Heart Icon"> <h3>Thanks for applying!</h3>
+                <p>We've received your info and will be in touch soon.</p>
+                <p style="font-size: 0.8rem; color: #999;">(Closing automatically...)</p>
+            </div>
+
+        </div>
+    </div>
+
+
+    <script>
+        const modalOverlay = document.getElementById("formModalOverlay");
+        const openBtn = document.getElementById("openModalBtn");
+        const closeBtn = document.getElementById("closeModalBtn");
+        const form = document.getElementById("vintageMarketForm");
+        const formContainer = document.getElementById("formContainer");
+        const thankYouMsg = document.getElementById("thankYouMessage");
+
+        function openModal() {
+            modalOverlay.style.display = "flex"; 
+            formContainer.style.display = "block";
+            thankYouMsg.style.display = "none";
+        }
+
+        function closeModal() {
+            modalOverlay.style.display = "none";
+        }
+
+        openBtn.addEventListener("click", openModal);
+        closeBtn.addEventListener("click", closeModal);
+
+        window.addEventListener("click", function(event) {
+            if (event.target === modalOverlay) {
+                closeModal();
+            }
+        });
+
+        form.addEventListener("submit", function(event) {
+            event.preventDefault(); 
+            
+            const submitBtn = form.querySelector('.submit-btn');
+            const originalBtnText = submitBtn.innerText;
+            submitBtn.innerText = "Sending..."; submitBtn.disabled = true; 
+
+            const data = new FormData(form);
+
+            fetch(form.action, {
+                method: form.method,
+                body: data,
+                headers: { 'Accept': 'application/json' }
+            }).then(response => {
+                if (response.ok) {
+                    form.reset(); 
+                    formContainer.style.display = "none"; 
+                    thankYouMsg.style.display = "block"; 
+                    setTimeout(() => {
+                        closeModal();
+                        submitBtn.innerText = originalBtnText; submitBtn.disabled = false;
+                    }, 3000);
+                } else {
+                    response.json().then(data => {
+                        if (Object.hasOwn(data, 'errors')) {
+                            alert(data["errors"].map(error => error["message"]).join(", "));
+                        } else {
+                            alert("Oops! There was a problem submitting your form");
+                        }
+                    });
+                    submitBtn.innerText = originalBtnText; submitBtn.disabled = false;
+                }
+            }).catch(error => {
+                alert("Oops! There was a problem submitting your form. Please check your internet connection.");
+                submitBtn.innerText = originalBtnText; submitBtn.disabled = false;
+            });
+        });
+    </script>
+
+</body>
+</html>
